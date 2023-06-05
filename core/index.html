@@ -14,11 +14,11 @@
         <h4 class="text-center py-3">WAF</h1>
             <div class="row">
                 <div class="col-sm-6">
-                    <p class="small">Silahkan Reload jika qrcode tidak muncul</p>
+                    <p class="small" id="connect">Scan QR code</p>
                     <img src="" alt="QR Code" id="qrcode">
                 </div>
                 <div class="col-sm-6">
-                     <span id="ref"></span>
+                    <span id="ref"></span>
                     <h5>Logs:</h3>
                         <ul class="logs"></ul>
                 </div>
@@ -28,33 +28,34 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
     <script>
-    
-    const url = window.location.href;
-    const lastSegment = url.split("/").pop();
 
-            var socket = io();
-            
-            
-            socket.emit('StartConnection',lastSegment);
-            socket.on('message', function (msg) {
+        const url = window.location.href;
+        const lastSegment = url.split("/").pop();
 
-                $('.logs').append($('<li>').text(msg));
-            });
+        var socket = io();
 
-            socket.on('qr', function (src) {
-                $('#qrcode').attr('src', src);
-                $('#qrcode').show();
-            });
 
-            socket.on('ready', function (data) {
-                $('#logout').attr('href', '/logout/' + data);
-                $("#ref").html('<button class="btn btn-danger mb-3" id="logout" onclick="logout('+data+')">Logout</button>');
-                $('#qrcode').hide();
-            });
-        
-           function logout(device){
-            socket.emit('LogoutDevice',device)
-            }        
+        socket.emit('StartConnection', lastSegment);
+        socket.on('message', function (msg) {
+
+            $('.logs').append($('<li>').text(msg));
+        });
+
+        socket.on('qr', function (src) {
+            $('#qrcode').attr('src', src);
+            $('#qrcode').show();
+        });
+
+        socket.on('ready', function (data) {
+            $('#logout').attr('href', '/logout/' + data);
+            $("#ref").html('<button class="btn btn-danger mb-3" id="logout" onclick="logout(' + data + ')">Logout</button>');
+            $("#connect").html('User Connected');
+            $('#qrcode').hide();
+        });
+
+        function logout(device) {
+            socket.emit('LogoutDevice', device)
+        }        
     </script>
 </body>
 
